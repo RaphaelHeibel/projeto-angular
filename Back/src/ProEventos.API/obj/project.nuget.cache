@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "per/BE5tEY5iM52g7PF0ECWe4nR/E2jiaLYACIbpN2iFjR8LB0WexoSEJi9PCLUgdwvD0r07kqO1ZrfQVcrRBw==",
+  "dgSpecHash": "LgAVXQU8Nx5cd6VYZVuTJn3s94A00OGyPyzlXqar1QK6cJMjCzPJopjhhOfUWSTbb8jsYdy7X6sWRaQgFTGkng==",
   "success": true,
-  "projectFilePath": "C:\\Users\\rapha\\OneDrive\\Documentos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj",
+  "projectFilePath": "C:\\Users\\rapha\\OneDrive\\Área de Trabalho\\ProEventos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\rapha\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\rapha\\.nuget\\packages\\microsoft.aspnetcore.openapi\\7.0.5\\microsoft.aspnetcore.openapi.7.0.5.nupkg.sha512",
