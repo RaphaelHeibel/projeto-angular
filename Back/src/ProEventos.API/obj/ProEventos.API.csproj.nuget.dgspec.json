@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\rapha\\OneDrive\\Documentos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj": {}
+    "C:\\Users\\rapha\\OneDrive\\Área de Trabalho\\ProEventos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\rapha\\OneDrive\\Documentos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj": {
+    "C:\\Users\\rapha\\OneDrive\\Área de Trabalho\\ProEventos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\rapha\\OneDrive\\Documentos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj",
+        "projectUniqueName": "C:\\Users\\rapha\\OneDrive\\Área de Trabalho\\ProEventos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj",
         "projectName": "ProEventos.API",
-        "projectPath": "C:\\Users\\rapha\\OneDrive\\Documentos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj",
+        "projectPath": "C:\\Users\\rapha\\OneDrive\\Área de Trabalho\\ProEventos\\projeto-angular\\Back\\src\\ProEventos.API\\ProEventos.API.csproj",
         "packagesPath": "C:\\Users\\rapha\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rapha\\OneDrive\\Documentos\\projeto-angular\\Back\\src\\ProEventos.API\\obj\\",
+        "outputPath": "C:\\Users\\rapha\\OneDrive\\Área de Trabalho\\ProEventos\\projeto-angular\\Back\\src\\ProEventos.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\rapha\\AppData\\Roaming\\NuGet\\NuGet.Config",
