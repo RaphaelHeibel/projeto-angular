@@ -1,4 +1,5 @@
-<p>Eventos</p>
+
+<h1>Eventos</h1>
 <hr />
 
 <form action="" class="form-inline">
@@ -19,8 +20,16 @@
 <table class="table table-striped">
   <thead class="thead-dark">
     <tr>
+      <th>
+        <button
+          type="button"
+          class="btn btn-outline-light btn-sm"
+          (click)="toggleShowImg()"
+        >
+          {{ !showImg ? "exibir" : "ocultar" }}
+        </button>
+      </th>
       <th>#</th>
-      <th>Imagem</th>
       <th>Tema</th>
       <th>Local</th>
       <th>Data</th>
@@ -29,18 +38,34 @@
       <th>Opções</th>
     </tr>
   </thead>
-  <div *ngFor="let evento of eventos">
-    <tbody>
-      <tr>
-        <td>{{ evento.imagemUrl }}</td>
-        <td>{{ evento.tema }}</td>
-        <td>{{ evento.tema }}</td>
-        <td>{{ evento.local }}</td>
-        <td>{{ evento.dataEvento }}</td>
-        <td>{{ evento.qtdPessoas }}</td>
-        <td>{{ evento.lote }}</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </div>
+  <tbody *ngIf="eventos && eventos.length">
+    <tr *ngFor="let evento of eventos">
+      <td>
+        <img
+          *ngIf="showImg"
+          collapse="!showImg"
+          isAnimated="true"
+          src="/assets/{{ evento.imagemURL }}"
+          [style.width.px]="widthImg"
+          [style.margin]="marginImg"
+        />
+      </td>
+      <td>{{ evento.eventoId }}</td>
+      <td>{{ evento.tema }}</td>
+      <td>{{ evento.local }}</td>
+      <td>{{ evento.dataEvento }}</td>
+      <td>{{ evento.qtdPessoas }}</td>
+      <td>{{ evento.lote }}</td>
+      <td></td>
+    </tr>
+  </tbody>
+  <tfoot *ngIf="!eventos.length">
+    <tr>
+      <td colspam="8" class="text-center">
+        <div>
+          <h4>Nenhum evento encontrado!</h4>
+        </div>
+      </td>
+    </tr>
+  </tfoot>
 </table>
