@@ -166,7 +166,6 @@ import {
   defineInjectable,
   depsTracker,
   destroyPlatform,
-  detectChanges,
   devModeEqual,
   effect,
   enableProdMode,
@@ -428,7 +427,7 @@ import {
   ɵɵtrustConstantResourceUrl,
   ɵɵvalidateIframeAttribute,
   ɵɵviewQuery
-} from "./chunk-62IBDOE3.js";
+} from "./chunk-P5ZCAOD5.js";
 export {
   ANIMATION_MODULE_TYPE,
   APP_BOOTSTRAP_LISTENER,
@@ -620,7 +619,6 @@ export {
   defaultIterableDiffers as ɵdefaultIterableDiffers,
   defaultKeyValueDiffers as ɵdefaultKeyValueDiffers,
   depsTracker as ɵdepsTracker,
-  detectChanges as ɵdetectChanges,
   devModeEqual as ɵdevModeEqual,
   findLocaleData as ɵfindLocaleData,
   flushModuleScopingQueueAsMuchAsPossible as ɵflushModuleScopingQueueAsMuchAsPossible,

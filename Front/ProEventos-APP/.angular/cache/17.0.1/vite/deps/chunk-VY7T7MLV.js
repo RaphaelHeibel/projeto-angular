@@ -3,7 +3,7 @@ import {
   XhrFactory,
   isPlatformServer,
   parseCookieValue
-} from "./chunk-4VJTHEMT.js";
+} from "./chunk-CHMPECP7.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -42,7 +42,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-62IBDOE3.js";
+} from "./chunk-P5ZCAOD5.js";
 
 // node_modules/@angular/common/fesm2022/http.mjs
 var HttpHandler = class {
@@ -1128,7 +1128,8 @@ var _FetchBackend = class _FetchBackend {
         }));
         const chunksAll = this.concatChunks(chunks, receivedLength);
         try {
-          body = this.parseBody(request, chunksAll);
+          const contentType = response.headers.get("Content-Type") ?? "";
+          body = this.parseBody(request, chunksAll, contentType);
         } catch (error) {
           observer.error(new HttpErrorResponse({
             error,
@@ -1164,7 +1165,7 @@ var _FetchBackend = class _FetchBackend {
       }
     });
   }
-  parseBody(request, binContent) {
+  parseBody(request, binContent, contentType) {
     switch (request.responseType) {
       case "json":
         const text = new TextDecoder().decode(binContent).replace(XSSI_PREFIX$1, "");
@@ -1172,7 +1173,9 @@ var _FetchBackend = class _FetchBackend {
       case "text":
         return new TextDecoder().decode(binContent);
       case "blob":
-        return new Blob([binContent]);
+        return new Blob([binContent], {
+          type: contentType
+        });
       case "arraybuffer":
         return binContent.buffer;
     }
@@ -2210,9 +2213,9 @@ export {
 
 @angular/common/fesm2022/http.mjs:
   (**
-   * @license Angular v17.0.2
+   * @license Angular v17.0.3
    * (c) 2010-2022 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-INLHCCPN.js.map
+//# sourceMappingURL=chunk-VY7T7MLV.js.map

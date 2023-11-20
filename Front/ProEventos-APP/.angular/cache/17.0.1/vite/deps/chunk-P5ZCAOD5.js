@@ -4626,13 +4626,17 @@ var EFFECTS_TO_SCHEDULE = 22;
 var REACTIVE_TEMPLATE_CONSUMER = 23;
 var HEADER_OFFSET = 25;
 var TYPE = 1;
-var HAS_TRANSPLANTED_VIEWS = 2;
-var HAS_CHILD_VIEWS_TO_REFRESH = 6;
+var DEHYDRATED_VIEWS = 6;
 var NATIVE = 7;
 var VIEW_REFS = 8;
 var MOVED_VIEWS = 9;
-var DEHYDRATED_VIEWS = 10;
-var CONTAINER_HEADER_OFFSET = 11;
+var CONTAINER_HEADER_OFFSET = 10;
+var LContainerFlags;
+(function(LContainerFlags2) {
+  LContainerFlags2[LContainerFlags2["None"] = 0] = "None";
+  LContainerFlags2[LContainerFlags2["HasTransplantedViews"] = 2] = "HasTransplantedViews";
+  LContainerFlags2[LContainerFlags2["HasChildViewsToRefresh"] = 4] = "HasChildViewsToRefresh";
+})(LContainerFlags || (LContainerFlags = {}));
 function isLView(value) {
   return Array.isArray(value) && typeof value[TYPE] === "object";
 }
@@ -4943,11 +4947,11 @@ function updateAncestorTraversalFlagsOnAttach(lView) {
 function markAncestorsForTraversal(lView) {
   let parent = lView[PARENT];
   while (parent !== null) {
-    if (isLContainer(parent) && parent[HAS_CHILD_VIEWS_TO_REFRESH] || isLView(parent) && parent[FLAGS] & 8192) {
+    if (isLContainer(parent) && parent[FLAGS] & LContainerFlags.HasChildViewsToRefresh || isLView(parent) && parent[FLAGS] & 8192) {
       break;
     }
     if (isLContainer(parent)) {
-      parent[HAS_CHILD_VIEWS_TO_REFRESH] = true;
+      parent[FLAGS] |= LContainerFlags.HasChildViewsToRefresh;
     } else {
       parent[FLAGS] |= 8192;
       if (!viewAttachedToChangeDetector(parent)) {
@@ -8076,7 +8080,7 @@ function trackMovedView(declarationContainer, lView) {
   const declaredComponentLView = lView[DECLARATION_COMPONENT_VIEW];
   ngDevMode && assertDefined(declaredComponentLView, "Missing declaredComponentLView");
   if (declaredComponentLView !== insertedComponentLView) {
-    declarationContainer[HAS_TRANSPLANTED_VIEWS] = true;
+    declarationContainer[FLAGS] |= LContainerFlags.HasTransplantedViews;
   }
   if (movedViews === null) {
     declarationContainer[MOVED_VIEWS] = [lView];
@@ -9261,7 +9265,7 @@ var Version = class {
     this.patch = full.split(".").slice(2).join(".");
   }
 };
-var VERSION = new Version("17.0.2");
+var VERSION = new Version("17.0.3");
 var NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR = {};
 function isSignal(value) {
   return typeof value === "function" && value[SIGNAL] !== void 0;
@@ -11224,16 +11228,15 @@ function createLContainer(hostNative, currentView, native, tNode) {
   const lContainer = [
     hostNative,
     true,
-    false,
+    0,
     currentView,
     null,
     tNode,
-    false,
+    null,
     native,
     null,
-    null,
     null
-    // dehydrated views
+    // moved views
   ];
   ngDevMode && assertEqual(lContainer.length, CONTAINER_HEADER_OFFSET, "Should allocate correct number of slots for LContainer header.");
   return lContainer;
@@ -11327,7 +11330,7 @@ function textBindingInternal(lView, index, value) {
   updateTextNode(lView[RENDERER], element, value);
 }
 var MAXIMUM_REFRESH_RERUNS = 100;
-function detectChangesInternal(tView, lView, context2, notifyErrorHandler = true) {
+function detectChangesInternal(lView, notifyErrorHandler = true) {
   const environment = lView[ENVIRONMENT];
   const rendererFactory = environment.rendererFactory;
   const afterRenderEventManager = environment.afterRenderEventManager;
@@ -11337,6 +11340,8 @@ function detectChangesInternal(tView, lView, context2, notifyErrorHandler = true
     afterRenderEventManager?.begin();
   }
   try {
+    const tView = lView[TVIEW];
+    const context2 = lView[CONTEXT];
     refreshView(tView, lView, tView.template, context2);
     detectChangesInViewWhileDirty(lView);
   } catch (error) {
@@ -11366,17 +11371,13 @@ function detectChangesInViewWhileDirty(lView) {
     );
   }
 }
-function checkNoChangesInternal(tView, lView, context2, notifyErrorHandler = true) {
+function checkNoChangesInternal(lView, notifyErrorHandler = true) {
   setIsInCheckNoChangesMode(true);
   try {
-    detectChangesInternal(tView, lView, context2, notifyErrorHandler);
+    detectChangesInternal(lView, notifyErrorHandler);
   } finally {
     setIsInCheckNoChangesMode(false);
   }
-}
-function detectChanges(component) {
-  const view = getComponentViewByInstance(component);
-  detectChangesInternal(view[TVIEW], view, component);
 }
 function refreshView(tView, lView, templateFn, context2) {
   ngDevMode && assertEqual(isCreationMode(lView), false, "Should be run in update mode");
@@ -11514,7 +11515,7 @@ function viewShouldHaveReactiveConsumer(tView) {
 }
 function detectChangesInEmbeddedViews(lView, mode) {
   for (let lContainer = getFirstLContainer(lView); lContainer !== null; lContainer = getNextLContainer(lContainer)) {
-    lContainer[HAS_CHILD_VIEWS_TO_REFRESH] = false;
+    lContainer[FLAGS] &= ~LContainerFlags.HasChildViewsToRefresh;
     for (let i = CONTAINER_HEADER_OFFSET; i < lContainer.length; i++) {
       const embeddedLView = lContainer[i];
       detectChangesInViewIfAttached(embeddedLView, mode);
@@ -11523,7 +11524,7 @@ function detectChangesInEmbeddedViews(lView, mode) {
 }
 function markTransplantedViewsForRefresh(lView) {
   for (let lContainer = getFirstLContainer(lView); lContainer !== null; lContainer = getNextLContainer(lContainer)) {
-    if (!lContainer[HAS_TRANSPLANTED_VIEWS])
+    if (!(lContainer[FLAGS] & LContainerFlags.HasTransplantedViews))
       continue;
     const movedViews = lContainer[MOVED_VIEWS];
     ngDevMode && assertDefined(movedViews, "Transplanted View flags set but missing MOVED_VIEWS");
@@ -11817,7 +11818,7 @@ var ViewRef$1 = class {
    * See {@link ChangeDetectorRef#detach} for more information.
    */
   detectChanges() {
-    detectChangesInternal(this._lView[TVIEW], this._lView, this.context, this.notifyErrorHandler);
+    detectChangesInternal(this._lView, this.notifyErrorHandler);
   }
   /**
    * Checks the change detector and its children, and throws if any changes are detected.
@@ -11827,7 +11828,7 @@ var ViewRef$1 = class {
    */
   checkNoChanges() {
     if (ngDevMode) {
-      checkNoChangesInternal(this._lView[TVIEW], this._lView, this.context, this.notifyErrorHandler);
+      checkNoChangesInternal(this._lView, this.notifyErrorHandler);
     }
   }
   attachToViewContainerRef() {
@@ -20946,6 +20947,10 @@ function applyChanges(component) {
   markViewDirty(getComponentViewByInstance(component));
   getRootComponents(component).forEach((rootComponent) => detectChanges(rootComponent));
 }
+function detectChanges(component) {
+  const view = getComponentViewByInstance(component);
+  detectChangesInternal(view);
+}
 function getDependenciesFromInjectable(injector, token) {
   const instance = injector.get(token, null, { self: true, optional: true });
   if (instance === null) {
@@ -21079,10 +21084,7 @@ function getEnvironmentInjectorProviders(injector) {
   }
   const providerImportsContainer = getProviderImportsContainer(injector);
   if (providerImportsContainer === null) {
-    if (isRootInjector(injector)) {
-      return providerRecordsWithoutImportPaths;
-    }
-    throwError2("Could not determine where injector providers were configured.");
+    return providerRecordsWithoutImportPaths;
   }
   const providerToPath = getProviderImportPaths(providerImportsContainer);
   const providerRecords = [];
@@ -21104,9 +21106,6 @@ function getEnvironmentInjectorProviders(injector) {
 }
 function isPlatformInjector(injector) {
   return injector instanceof R3Injector && injector.scopes.has("platform");
-}
-function isRootInjector(injector) {
-  return injector instanceof R3Injector && injector.scopes.has("root");
 }
 function getInjectorProviders(injector) {
   if (injector instanceof NodeInjector) {
@@ -23432,7 +23431,6 @@ export {
   ɵɵadvance,
   ɵɵdirectiveInject,
   ɵɵinvalidFactory,
-  detectChanges,
   ViewRef$1,
   ChangeDetectorRef,
   injectChangeDetectorRef,
@@ -23715,14 +23713,14 @@ export {
 
 @angular/core/fesm2022/primitives/signals.mjs:
   (**
-   * @license Angular v17.0.2
+   * @license Angular v17.0.3
    * (c) 2010-2022 Google LLC. https://angular.io/
    * License: MIT
    *)
 
 @angular/core/fesm2022/core.mjs:
   (**
-   * @license Angular v17.0.2
+   * @license Angular v17.0.3
    * (c) 2010-2022 Google LLC. https://angular.io/
    * License: MIT
    *)
@@ -23736,4 +23734,4 @@ export {
    * found in the LICENSE file at https://angular.io/license
    *)
 */
-//# sourceMappingURL=chunk-62IBDOE3.js.map
+//# sourceMappingURL=chunk-P5ZCAOD5.js.map
