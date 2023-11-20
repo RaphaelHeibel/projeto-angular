@@ -14,13 +14,20 @@ import { get } from 'https';
 })
 export class EventosComponent implements OnInit {
 
-  public eventos: any;
+  public eventos: any = [];
+  widthImg: number = 150;
+  marginImg: number = 2;
+  showImg: boolean = true;
 
   constructor(private http: HttpClient) { }
 
+  toggleShowImg() {
+    this.showImg = !this.showImg;
+  }
+
   ngOnInit(): void {
     this.http.get("http://localhost:5181/api/eventos").subscribe((data) => {
-      this.eventos = data
+      this.eventos = data;
       console.log(data);
     });
   }
